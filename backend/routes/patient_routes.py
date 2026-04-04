@@ -6,7 +6,7 @@ All routes require authentication. Reports are filtered by logged-in user (user_
 import json
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from utils import get_current_user
+from auth import get_current_user
 from database import get_db
 from models import PatientReport, User
 from schemas.patient_schema import PatientReportDetail, PatientReportSummary
@@ -18,6 +18,7 @@ router = APIRouter(prefix="/patients", tags=["patients"])
 @router.get("/history", response_model=list[PatientReportSummary])
 def get_patient_history(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     """
     Return all reports belonging to the authenticated user.
@@ -42,10 +43,11 @@ def get_patient_history(
     ]
 
 
-@router.get("/history", response_model=list[PatientReportSummary])
-def get_patient_history(
+@router.get("/report/{report_id}", response_model=PatientReportDetail)
+def get_report(
+    report_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),  
+    current_user: User = Depends(get_current_user),
 ):
     """
     Return the full stored report (including report_data) for the given id.
@@ -74,4 +76,3 @@ def get_patient_history(
         analysis_date=report.analysis_date,
         report_data=report_data,
     )
-

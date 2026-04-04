@@ -63,21 +63,19 @@ function Field({ label, type = "text", name, options, value, onChange }) {
   return (
     <div className="relative w-full group">
       <div
-        className={`absolute -inset-0.5 rounded-2xl transition duration-500 blur-[2px] pointer-events-none ${
-          isFocused
+        className={`absolute -inset-0.5 rounded-2xl transition duration-500 blur-[2px] pointer-events-none ${isFocused
             ? "bg-sky-400/50 opacity-100"
             : "bg-transparent opacity-0 group-hover:bg-slate-300/40 group-hover:opacity-100"
-        }`}
+          }`}
       />
 
       <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl border border-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all overflow-hidden focus-within:border-sky-400 focus-within:bg-white/95 pb-1">
         <label
           htmlFor={name}
-          className={`absolute left-4 transition-all duration-300 pointer-events-none z-10 ${
-            isFocused || hasValue
+          className={`absolute left-4 transition-all duration-300 pointer-events-none z-10 ${isFocused || hasValue
               ? "top-2 text-[10px] font-bold text-sky-600 uppercase tracking-wider"
               : "top-4 text-sm font-medium text-slate-500"
-          }`}>
+            }`}>
           {label}
         </label>
 
@@ -86,9 +84,8 @@ function Field({ label, type = "text", name, options, value, onChange }) {
             <select
               id={name}
               name={name}
-              className={`block w-full appearance-none bg-transparent px-4 pb-2 pt-7 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-0 ${
-                !hasValue && !isFocused ? "text-transparent" : ""
-              }`}
+              className={`block w-full appearance-none bg-transparent px-4 pb-2 pt-7 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-0 ${!hasValue && !isFocused ? "text-transparent" : ""
+                }`}
               value={value}
               onChange={onChange}
               onFocus={() => setIsFocused(true)}
@@ -102,9 +99,8 @@ function Field({ label, type = "text", name, options, value, onChange }) {
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4">
               <ChevronDown
-                className={`h-4 w-4 transition-colors duration-300 ${
-                  isFocused ? "text-sky-500" : "text-slate-400"
-                }`}
+                className={`h-4 w-4 transition-colors duration-300 ${isFocused ? "text-sky-500" : "text-slate-400"
+                  }`}
               />
             </div>
           </>
@@ -422,7 +418,7 @@ export default function Analyze() {
                   onChange={handleChange}
                 />
                 <Field
-                  label="Growth Factor (G)"
+                  label="Global epigenetic score (G)"
                   name="G"
                   type="number"
                   value={formData.G}

@@ -10,7 +10,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from utilS import get_current_user
+from utils import get_current_user
 from database import get_db
 from models import PatientReport, User
 from ml.inference import predict_patient
@@ -48,7 +48,7 @@ def predict_endpoint(
         "epigenetic_age": result.get("epigenetic_age"),
     }
     report = PatientReport(
-        user_id=current_user["user_id"]
+        user_id=current_user["user_id"],
         patient_name=payload.patient_name or "Unknown",
         age=payload.age,
         gender=payload.gender or "",
