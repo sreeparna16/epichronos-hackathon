@@ -48,7 +48,7 @@ def predict_endpoint(
         "epigenetic_age": result.get("epigenetic_age"),
     }
     report = PatientReport(
-        user_id=current_user["user_id"],
+        user_id=current_user.id,
         patient_name=payload.patient_name or "Unknown",
         age=payload.age,
         gender=payload.gender or "",
