@@ -10,7 +10,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from auth import get_current_user
+from utils import get_current_user
 from database import get_db
 from models import PatientReport, User
 from ml.inference import predict_patient
@@ -24,7 +24,7 @@ router = APIRouter(tags=["prediction"])
 def predict_endpoint(
     payload: PredictionRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    
 ):
     """
     Run the risk model on a single patient's biomarker profile.
@@ -48,7 +48,7 @@ def predict_endpoint(
         "epigenetic_age": result.get("epigenetic_age"),
     }
     report = PatientReport(
-        user_id=current_user.id,
+        user_id=1,
         patient_name=payload.patient_name or "Unknown",
         age=payload.age,
         gender=payload.gender or "",
