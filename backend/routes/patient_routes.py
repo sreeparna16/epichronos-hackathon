@@ -25,7 +25,7 @@ def get_patient_history(
     """
     reports = (
         db.query(PatientReport)
-        .filter(PatientReport.user_id ==1)
+        .filter(PatientReport.user_id == current_user.id)
         .order_by(PatientReport.analysis_date.desc())
         .all()
     )
@@ -42,11 +42,10 @@ def get_patient_history(
     ]
 
 
-@router.get("/report/{report_id}", response_model=PatientReportDetail)
-def get_report(
-    report_id: int,
+@router.get("/history", response_model=list[PatientReportSummary])
+def get_patient_history(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),  
 ):
     """
     Return the full stored report (including report_data) for the given id.
@@ -75,3 +74,4 @@ def get_report(
         analysis_date=report.analysis_date,
         report_data=report_data,
     )
+

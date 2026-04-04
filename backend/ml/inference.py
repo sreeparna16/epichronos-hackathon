@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 
 
-# Resolve paths relative to the backend directory
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 MODELS_DIR = BASE_DIR / "models"
 
@@ -32,7 +32,7 @@ def _load_model(path: Path) -> Any:
     return joblib.load(path)
 
 
-# Load artifacts once when module is imported to avoid repeated disk I/O.
+
 try:
     risk_model = _load_model(RISK_MODEL_PATH)
     feature_names: List[str] = _load_model(FEATURES_PATH)
@@ -58,7 +58,7 @@ def predict_patient(data: Dict[str, Any]) -> Dict[str, Any]:
       * epigenetic_age (age + tumor_mean * 0.5), when possible.
     """
 
-    # Compute tumor_mean from key methylation features when not provided
+   
     methylation_features = [
         "RASSF1A_pct",
         "SEPT9_pct",
@@ -71,26 +71,22 @@ def predict_patient(data: Dict[str, Any]) -> Dict[str, Any]:
             vals = [float(data[f]) for f in methylation_features]
             data["tumor_mean"] = float(sum(vals) / len(vals))
         except KeyError:
-            # If any feature is missing, we simply skip tumor_mean; missing
-            # features will be caught by the generic validation below.
+           
             pass
 
-    # Ensure all expected feature names are present
     missing = [name for name in feature_names if name not in data]
     if missing:
         raise ValueError(
             f"Missing required features for prediction: {', '.join(missing)}"
         )
 
-    # Build DataFrame with columns in the exact training order
+  
     df = pd.DataFrame([[data[name] for name in feature_names]], columns=feature_names)
 
-    # Apply imputation and model prediction
     X_imputed = median_imputer.transform(df)
     proba = risk_model.predict_proba(X_imputed)[0][1]
     risk_score = float(proba)
 
-    # Map risk_score to categorical risk_level
     if risk_score < 0.4:
         risk_level = "Low"
     elif risk_score < 0.7:
@@ -98,17 +94,6 @@ def predict_patient(data: Dict[str, Any]) -> Dict[str, Any]:
     else:
         risk_level = "High"
 
-    # Derive patient-specific biomarker contributions.
-    # Instead of returning the static model-level feature_importances_ (which are
-    # identical for every patient), we compute a weighted contribution that
-    # reflects BOTH the feature's global importance AND how much *this patient's*
-    # value deviates from the training median:
-    #
-    #   contribution_i = importance_i * |patient_value_i - median_i| / (median_i + ε)
-    #
-    # After normalising these Raw values to sum to 1, each patient gets a unique
-    # fingerprint: a biomarker that's globally less important can rank higher for a
-    # specific patient if their value is far from the population median.
     biomarker_contribution: Dict[str, float] = {}
     top_biomarkers: List[Dict[str, Any]] = []
 
